@@ -5,22 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>NGFood</title>
-    
+    <style>
+        .menu{
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
     
     <h1>NGFood</h1>
     {% block body %}
     {% for el in content%}
-    <div class="{{ el.food_name }}">
+    <div class="menu">
+        <a href="/about/{{ el.food_name }}">
+        <form action="/about/{{ el.food_name }}">
         <img src="{{ el.picture_path }}" alt=""> 
         <p> {{ el.food_name }} </p>
         <p> {{ el.price }} грн</p>
-        <form action="/about/{{ el.food_name }}">
-        <input type="submit" value="+">
         </form>
+        </a>
+        <button type="submit" onclick="addToReceipt('{{ el.food_name }}', '{{ el.price }}')">+</button>
     </div> 
     {% endfor %}
     {% endblock %}
+    <div class="cart-block" id="cart">
+        <h1>Ваш заказ:</h1>
+        <div class="content-block">
+
+        </div>   
+    </div>
+    <script>
+        function addToReceipt(food, price){
+            const listItems = document.querySelector('div.content-block');
+            const listItem = document.createElement('div')
+            const name_food = document.createElement('p');
+            const food_price = document.createElement('p');
+            const delBtn = document.createElement('button');
+
+            listItems.appendChild(listItem);
+            listItem.appendChild(name_food);
+            name_food.textContent = food;
+            listItem.appendChild(food_price);
+            food_price.textContent = price;
+            listItem.appendChild(delBtn);
+            delBtn.textContent = "-";
+            
+            delBtn.addEventListener('click', () => {
+                listItems.removeChild(listItem);
+            });
+        }
+    </script>
 </body>
 </html>

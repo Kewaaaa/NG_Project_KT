@@ -10,7 +10,7 @@ class Food(db.Model):
     food_name = db.Column(db.String(255))
     price = db.Column(db.Integer)
     ingredients = db.Column(db.String(255))
-    
+
     def __repr__(self):
         return self.food_name
 
