@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>NGFood</title>
+    
+</head>
+<body>
+    
+    <h1>NGFood</h1>
+    {% block body %}
+    {% for el in content%}
+    <div class="{{ el.food_name }}">
+        <img src="{{ el.picture_path }}" alt=""> 
+        <p> {{ el.food_name }} </p>
+        <p> {{ el.price }} грн</p>
+        <form action="/about/{{ el.food_name }}">
+        <input type="submit" value="+">
+        </form>
+    </div> 
+    {% endfor %}
+    {% endblock %}
+</body>
+</html>
