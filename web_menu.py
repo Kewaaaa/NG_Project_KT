@@ -121,11 +121,4 @@ def paycart():
         return redirect(url_for('pay'))
     return redirect(url_for('pay'))
 
-
-
-    # res.headers['Access-Control-Allow-Origin'] = "*"
- 
-
-# with app.app_context():
-#     db.create_all()
 app.run(host="0.0.0.0", port="8081")
