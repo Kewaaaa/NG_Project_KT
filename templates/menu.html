@@ -31,10 +31,9 @@
     </div> 
     {% endfor %}
     {% endblock %}
-    <button id="clearst">Delete</button>
     <div class="receipt" id="cart">
         
-        <h1>Ваш заказ:</h1>
+        <h1>Ваше замовлення:</h1>
         <div class="content-block">
             
         </div> 
@@ -64,6 +63,7 @@
             xttp.onload = function() {
             if (xttp.status === 200) {
                 window.location.href = 'http://127.0.0.1:8081/pay-page';
+                localStorage.clear()
                 }
             };
             xttp.send(JSON.stringify(data_storage))
@@ -156,12 +156,6 @@
             if (localStorage.getItem('total_price') !== null){
                 document.querySelector('.show').textContent = "Total " + localStorage.getItem('total_price')
             } 
-            let clear_str = document.getElementById('clearst');
-            clear_str.addEventListener('click',  clr);
-
-            function clr(){
-                 localStorage.clear()
-            }
     </script>
     
 </body>

@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
+from fpdf import FPDF
 import json
 
 app = Flask("NGFood")
@@ -8,7 +9,9 @@ app.config['SQLALCHEMY_BINDS'] = {
         'db2': 'sqlite:///receipte.db',
         'db3': 'sqlite:///users-creditcard.db'
 }
+app.config['SECRET_KEY'] = 'erlkgnwrgnioaghawoi4tgOWGWRGRE'
 db = SQLAlchemy(app)
+pdf = FPDF()
 
 class Food(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -37,7 +40,7 @@ class Creditcards(db.Model):
     money = db.Column(db.Integer, nullable=False)
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():    
     content = Food.query.all()
     return render_template("menu.html", content = content)
@@ -90,7 +93,6 @@ def payhandler():
             db.session.add(element)
             db.session.commit()
         elif key == 'total_price':
-            print(key, value)
             full_price = Receipte(receipt_total_price = value)
             db.session.add(full_price)
             db.session.commit()
@@ -117,8 +119,13 @@ def paycart():
             cash.money = transaction
             my_card.money = my_card.money+price
             db.session.commit()
+            with open('static/total_price/full_price.txt', 'w') as f:
+                f.write('')
             flash('access')
-        return redirect(url_for('pay'))
+        elif money_int < price:
+            flash('Недостаточно золота')
+            return redirect(url_for('pay'))
     return redirect(url_for('pay'))
+
 
 app.run(host="0.0.0.0", port="8081")
