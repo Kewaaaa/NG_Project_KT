@@ -6,6 +6,9 @@
     
     <title>NGFood</title>
     <style>
+        body{
+            background-color: rgb(191, 187, 187);
+        }
         .menu{
             display: inline-block;
         }
@@ -24,36 +27,143 @@
         <p> {{ el.price }} грн</p>
         </form>
         </a>
-        <button type="submit" onclick="addToReceipt('{{ el.food_name }}', '{{ el.price }}')">+</button>
+        <button type="submit" onclick="addStorage('{{ el.food_name }}', '{{ el.price }}' )">+</button>
     </div> 
     {% endfor %}
     {% endblock %}
-    <div class="cart-block" id="cart">
+    <button id="clearst">Delete</button>
+    <div class="receipt" id="cart">
+        
         <h1>Ваш заказ:</h1>
         <div class="content-block">
-
-        </div>   
+            
+        </div> 
+        <div class="show">
+            
+        </div>
+        
+        <button type="submit" id="buy">Купити</button>
+        
     </div>
     <script>
-        function addToReceipt(food, price){
-            const listItems = document.querySelector('div.content-block');
-            const listItem = document.createElement('div')
-            const name_food = document.createElement('p');
-            const food_price = document.createElement('p');
-            const delBtn = document.createElement('button');
+        let reqURL = 'http://127.0.0.1:8081/getdata'
+        let payURL = 'http://127.0.0.1:8081/pay-page-handler'
+        buy_btn = document.getElementById('buy')
 
-            listItems.appendChild(listItem);
-            listItem.appendChild(name_food);
-            name_food.textContent = food;
-            listItem.appendChild(food_price);
-            food_price.textContent = price;
-            listItem.appendChild(delBtn);
-            delBtn.textContent = "-";
+        const xttp = new XMLHttpRequest()
+       
+        buy_btn.addEventListener('click', function(){
+            xttp.open('POST', payURL)
+            xttp.setRequestHeader('Content-Type', 'application/json')
+
+            data_storage = {}
+            let keys = Object.keys(localStorage)
+            keys.forEach(function(key){
+                data_storage[key] = localStorage.getItem(key)
+            })
+            xttp.onload = function() {
+            if (xttp.status === 200) {
+                window.location.href = 'http://127.0.0.1:8081/pay-page';
+                }
+            };
+            xttp.send(JSON.stringify(data_storage))
+        } )
+
+
+
+        function getPriceFromServ(data){
             
-            delBtn.addEventListener('click', () => {
-                listItems.removeChild(listItem);
-            });
+            xttp.open('POST', reqURL)
+            xttp.responseType = 'json'
+            xttp.setRequestHeader('Content-Type', 'application/json')
+            xttp.onload = () => {
+                
+            console.log(xttp.response)
+            localStorage.setItem('total_price', xttp.response)
+            document.querySelector('.show').textContent = "Total " + localStorage.getItem('total_price')
+                                 
+            }    
+            xttp.send(JSON.stringify(data))
         }
+        
+    
+        function addStorage(food_name, food_price){
+            let counter = localStorage.getItem('counter') || 1;
+
+            jsn_obj = {
+                'name': food_name,
+                'price': food_price
+            }    
+            counter++;
+            localStorage.setItem(food_name+counter, JSON.stringify(jsn_obj))
+            localStorage.setItem('counter', counter)
+            
+            getPriceFromServ(jsn_obj)
+            addElem(jsn_obj)     
+        }
+        function addElem(data){
+            
+            let itemLists = document.querySelector('.content-block')
+            let listItem = document.createElement('div')
+            let food_title = document.createElement('p')
+            let cost = document.createElement('p')
+            let delBtn = document.createElement('button')
+            
+            food_title.className = 'title-food'
+            cost.className = 'food-price'
+            delBtn.className = 'delete-button'
+            delBtn.id = data['price']
+
+            itemLists.appendChild(listItem)
+            listItem.appendChild(food_title)
+            food_title.textContent = data['name']
+            listItem.appendChild(cost)
+            cost.textContent = data['price']
+            listItem.appendChild(delBtn)
+            delBtn.textContent = '-'
+
+            delBtn.addEventListener('click', () => {
+                obj = {
+                    'price': parseInt(-delBtn.id)
+                }        
+                getPriceFromServ(obj)
+
+                itemLists.removeChild(listItem);
+                for (let i = 0; i < localStorage.length; i++) {
+                let key = localStorage.key(i); 
+                let value = localStorage.getItem(key);
+                if (value === JSON.stringify(data)) {
+                    localStorage.removeItem(key)
+                    break; 
+                }
+                }         
+                document.querySelector('.show').textContent = "Total " + localStorage.getItem('total_price')
+                
+            });
+
+        }     
+        
+        
+            for (let i = 0; i < localStorage.length; i++){
+                let key = localStorage.key(i)
+                let value = localStorage.getItem(key);
+                let parsedValue = JSON.parse(value);
+                if (key == 'counter' || key == 'total_price'){
+                    continue
+                }
+               addElem(parsedValue)
+            }
+            if (localStorage.getItem('total_price') !== null){
+                document.querySelector('.show').textContent = "Total " + localStorage.getItem('total_price')
+            } 
+            let clear_str = document.getElementById('clearst');
+            clear_str.addEventListener('click',  clr);
+
+            function clr(){
+                 localStorage.clear()
+            }
     </script>
+    
 </body>
+
 </html>

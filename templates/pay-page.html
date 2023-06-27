@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+   <h1>PayNeYpal</h1> 
+   {% for msg in get_flashed_messages() %}
+    <div class="flash">{{ msg }}</div>
+   {% endfor %}
+   {% for el in rec_content %}
+    {% if el.receipte_food_name is not none and el.receipt_price is not none %}
+    <p>{{ el.receipte_food_name }}</p>
+    <p>{{ el.receipt_price }}</p>
+    {% endif %}
+   {% endfor %}
+    <p>{{ price }}</p>
+    <form action="/paycarts" method="POST">
+        <p>Card number</p>
+        <input type="text" class="cartnum" placeholder="XXXX XXXX XXXX XXXX" name = 'nums'>
+        <p>CVV</p>
+        <input type="text" class="cartnum2" name="cvv">
+        <p>Дата действия</p>
+        <input type="text" class="cartnum3" name="valid">
+        <button type="submit">Pay</button>
+    </form>
+
+   <script>
+        let url = 'http://127.0.0.1:8081/paycarts'
+        let btn = document.getElementById('cl')
+        // btn.addEventListener('click', function(){
+        //     let xhr = new XMLHttpRequest()
+        //     xhr.open('GET', url)
+        //     xhr.onload= () =>{
+        //         console.log(xhr.response)
+        //     }
+        //     xhr.send()
+        // })
+
+        document.querySelector('.cartnum').addEventListener('input', 
+    function(e){
+      this.value = this.value.replace(/[^\d.]/g, '');
+    }
+    )
+    document.querySelector('.cartnum2').addEventListener('input', 
+    function(e){
+      this.value = this.value.replace(/[^\d.]/g, '');
+    }
+    )
+    
+   </script>
+</body>
+</html>
