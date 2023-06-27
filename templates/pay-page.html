@@ -29,17 +29,6 @@
     </form>
 
    <script>
-        let url = 'http://127.0.0.1:8081/paycarts'
-        let btn = document.getElementById('cl')
-        // btn.addEventListener('click', function(){
-        //     let xhr = new XMLHttpRequest()
-        //     xhr.open('GET', url)
-        //     xhr.onload= () =>{
-        //         console.log(xhr.response)
-        //     }
-        //     xhr.send()
-        // })
-
         document.querySelector('.cartnum').addEventListener('input', 
     function(e){
       this.value = this.value.replace(/[^\d.]/g, '');

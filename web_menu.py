@@ -109,7 +109,6 @@ def paycart():
     if check:
         full_price = Receipte.query.first()
         price = full_price.receipt_total_price
-        # cash = db.session.query(Creditcards.money).filter(Creditcards.card_number == cardnum).first()
         cash = Creditcards.query.filter(Creditcards.card_number == cardnum).first()
         my_card = Creditcards.query.filter(Creditcards.card_number == "1234567812345678").first()
         money_int = int(cash.money)
